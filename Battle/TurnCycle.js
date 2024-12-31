@@ -123,7 +123,7 @@ class TurnCycle {
   // }
 
   //
-  async init() {
+  async begin() {
       if (this.battle.enemy) {
           await this.onNewEvent({
               type: "textMessage",

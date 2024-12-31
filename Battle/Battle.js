@@ -83,7 +83,7 @@ class Battle {
   }
 
  
-  init(container) {
+  begin(container) {
     this.createElement();
     container.appendChild(this.element);
 
@@ -91,7 +91,7 @@ class Battle {
     Object.keys(this.combatants).forEach(key => {
       let combatant = this.combatants[key];
       combatant.id = key;
-      combatant.init(this.element);
+      combatant.begin(this.element);
     });
 
     // Init the turn cycle
@@ -100,12 +100,12 @@ class Battle {
       onNewEvent: event => {
         return new Promise(resolve => {
           const battleEvent = new BattleEvent(event, this);
-          battleEvent.init(resolve);
+          battleEvent.begin(resolve);
         });
       }
     });
 
   
-    this.turnCycle.init();
+    this.turnCycle.begin();
   }
 }

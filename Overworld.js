@@ -87,9 +87,10 @@ class Overworld {
         this.startGameLoop();
 
         // Uncomment to trigger a predefined cutscene
-        // this.map.startCutscene([
-        //     { type: "battle" },
+        this.map.startCutscene([
+            { type: "battle" },
         //     { type: "changeMap", map: "LodgeRoom" }
         // ]);
-    }
+    ])
+}
 }

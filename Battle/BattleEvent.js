@@ -1,177 +1,148 @@
-class SubmissionMenu {
-  constructor({ caster, enemy, onComplete, items, replacements }) {
-      this.enemy = enemy;
-      this.onComplete = onComplete;
-      this.replacements = replacements;
-
-      console.log({ replacements });
-
-      this.items = this._mapItems(caster, items);
+class BattleEvent {
+  constructor(event, battle) {
+    this.event = event; 
+    this.battle = battle;  
   }
 
  
-  _mapItems(caster, items) {
-      const quantityMap = {};
-
-      items.forEach(item => {
-          if (item.team === caster.team) {
-              let existing = quantityMap[item.actionId];
-              if (existing) {
-                  existing.quantity += 1;
-              } else {
-                  quantityMap[item.actionId] = {
-                      actionId: item.actionId,
-                      quantity: 1,
-                      instanceId: item.instanceId,
-                  };
-              }
-          }
-      });
-
-      return Object.values(quantityMap);
+  getTextMessage() {
+    return this.event.text
+      .replace("{CASTER}", this.event.caster?.name)
+      .replace("{TARGET}", this.event.target?.name)
+      .replace("{ACTION}", this.event.action?.name);
   }
 
-  // Generate the pages of the menu
-  getPages() {
-      const backOption = this._createBackOption();
-
-      return {
-          root: this._getRootPage(backOption),
-          attacks: this._getAttacksPage(backOption),
-          items: this._getItemsPage(backOption),
-          replacements: this._getReplacementsPage(backOption),
-      };
-  }
-
-  // Create a back option to return to the previous page
-  _createBackOption() {
-      return {
-          label: "Go back",
-          description: "Return to the previous page",
-          handler: () => {
-              this.keyboardMenu.setOptions(this.getPages().root);
-          },
-      };
-  }
-
-  // Root page options
-  _getRootPage(backOption) {
-      return [
-          {
-              label: "Attack",
-              description: "Choose an attack",
-              handler: () => {
-                  this.keyboardMenu.setOptions(this.getPages().attacks);
-              },
-          },
-          {
-              label: "Items",
-              description: "Choose an item",
-              handler: () => {
-                  this.keyboardMenu.setOptions(this.getPages().items);
-              },
-          },
-          {
-              label: "Swap",
-              description: "Change to another combatant",
-              handler: () => {
-                  this.keyboardMenu.setOptions(this.getPages().replacements);
-              },
-          },
-      ];
-  }
-
-  // Attacks page options
-  _getAttacksPage(backOption) {
-      return [
-          ...(this.caster.actions || []).map(key => {
-              const action = Actions[key];
-              if (!action) {
-                  console.error(`Action with key '${key}' is undefined`);
-                  return null;
-              }
-              return {
-                  label: action.name,
-                  description: action.description,
-                  handler: () => {
-                      this.menuSubmit(action);
-                  },
-              };
-          }).filter(option => option !== null),
-          backOption,
-      ];
-  }
-
-  // Items page options
-  _getItemsPage(backOption) {
-      return [
-          ...(this.items || []).map(item => {
-              const action = Actions[item.actionId];
-              if (!action) {
-                  console.error(`Action with id '${item.actionId}' is undefined`);
-                  return null;
-              }
-              return {
-                  label: action.name,
-                  description: action.description,
-                  right: () => "x" + item.quantity,
-                  handler: () => {
-                      this.menuSubmit(action, item.instanceId);
-                  },
-              };
-          }),
-          backOption,
-      ];
-  }
-
-  // Replacements page
-  _getReplacementsPage(backOption) {
-      return [
-          ...(this.replacements || []).map(replacement => ({
-              label: replacement.name,
-              description: replacement.description,
-              handler: () => {
-                  this.menuSubmitReplacement(replacement);
-              },
-          })),
-          backOption,
-      ];
-  }
-
-  // submissions
-  menuSubmit(action, instanceId = null) {
-      if (!action) {
-          console.error("menuSubmit called with undefined action");
-          return;
-      }
-
-      this.keyboardMenu?.end();
-      this.onComplete({
-          action,
-          target: action.targetType === "friendly" ? this.caster : this.enemy,
-      });
-  }
-
-  // Handle replacement submission
-  menuSubmitReplacement(replacement) {
-      this.keyboardMenu?.end();
-      this.onComplete({
-          replacement,
-      });
-  }
-  decide() {
-      this.menuSubmit(Actions[this.caster.actions[0]]);
-  }
-
-  // Show menu
-  showMenu(container) {
-      this.keyboardMenu = new KeyboardMenu();
-      this.keyboardMenu.init(container);
-      this.keyboardMenu.setOptions(this.getPages().root);
+ 
+  textMessage(resolve) {
+    const text = this.getTextMessage();
+    const message = new TextMessage({
+      text,
+      onComplete: () => resolve(),
+    });
+    message.begin(this.battle.element);
   }
 
   
-  init(container) {
-      this.showMenu(container);
+  async stateChange(resolve) {
+    const { caster, target, damage, recover, status } = this.event;
+    let who = this.event.onCaster ? caster : target;
+
+    if (damage) this.handleDamage(target, damage);
+    if (recover) this.handleRecovery(who, recover);
+    if (status !== undefined) this.handleStatus(who, status);
+
+    // Wait before resolving the state change
+    await utils.wait(600);
+    resolve();
+  }
+
+  handleDamage(target, damage) {
+    target.update({ hp: target.hp - damage });
+
+  }
+
+  handleRecovery(who, recover) {
+    let newHp = who.hp + recover;
+    who.update({ hp: Math.min(newHp, who.maxHp) });
+  }
+
+ 
+  handleStatus(who, status) {
+    if (status === null) {
+      who.update({ status: null });
+    } else {
+      who.update({ status: { ...status } });
+    }
+  }
+
+  submissionMenu(resolve) {
+    const { caster } = this.event;
+    const menu = new SubmissionMenu({
+      caster,
+      enemy: this.event.enemy,
+      items: this.battle.items,
+      replacements: this.getReplacements(caster),
+      onComplete: submission => resolve(submission),
+    });
+    menu.begin(this.battle.element);
+  }
+
+  // Get the list of combatants who can replace the current one
+  getReplacements(caster) {
+    return Object.values(this.battle.combatants).filter(
+      c => c.id !== caster.id && c.team === caster.team && c.hp > 0
+    );
+  }
+
+  // Show the replacement menu
+  replacementMenu(resolve) {
+    const menu = new ReplacementMenu({
+      replacements: this.getTeamReplacements(),
+      onComplete: replacement => resolve(replacement),
+    });
+    menu.begin(this.battle.element);
+  }
+
+  // Get the list of replacements from the team
+  getTeamReplacements() {
+    return Object.values(this.battle.combatants).filter(
+      c => c.team === this.event.team && c.hp > 0
+    );
+  }
+
+  // Replace the current combatant with a new one
+  async replace(resolve) {
+    const { replacement } = this.event;
+
+    // Clear out the old combatant and replace
+    const prevCombatant = this.battle.combatants[this.battle.activeCombatants[replacement.team]];
+    this.battle.activeCombatants[replacement.team] = null;
+    prevCombatant.update();
+
+    await utils.wait(400);
+
+    this.battle.activeCombatants[replacement.team] = replacement.id;
+    replacement.update();
+
+    // Update team components
+    this.battle.playerTeam.update();
+    this.battle.enemyTeam.update();
+
+    resolve();
+  }
+
+  // Grant XP to a combatant
+  giveXp(resolve) {
+    let amount = this.event.xp;
+    const { combatant } = this.event;
+
+    const step = () => {
+      if (amount > 0) {
+        amount -= 1;
+        combatant.xp += 1;
+        if (combatant.xp === combatant.maxXp) this.levelUp(combatant);
+        combatant.update();
+        requestAnimationFrame(step);
+        return;
+      }
+      resolve();
+    };
+    requestAnimationFrame(step);
+  }
+
+  
+  levelUp(combatant) {
+    combatant.xp = 0;
+    combatant.maxXp = 100;
+    combatant.level += 1;
+  }
+
+  animation(resolve) {
+    const fn = BattleAnimations[this.event.animation];
+    fn(this.event, resolve);
+  }
+  
+  begin(resolve) {
+    this[this.event.type](resolve);
   }
 }

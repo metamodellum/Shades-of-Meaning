@@ -151,7 +151,7 @@ decrementStatus(){
   return null;
 }
 
-  init(container) {
+  begin(container) {
     this.createElement();
     container.appendChild(this.hudElement);
     container.appendChild(this.weaponElement);

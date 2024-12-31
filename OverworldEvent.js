@@ -94,10 +94,19 @@ class OverworldEvent {
         menu.begin(document.querySelector(".game-container"));
     }
 
-    // Executes the event based on its type
+
+    //battle
     begin() {
         return new Promise((resolve) => {
-            this[this.event.type](resolve);
+            console.log(`Event type: ${this.event.type}`);
+            console.log(`exist??${typeof this[this.event.type] === "function"}`);
+    
+            if (typeof this[this.event.type] === "function") {
+                this[this.event.type](resolve);
+            } else {
+                console.error(`not found for this type: ${this.event.type}`);
+                resolve(); 
+            }
         });
-    }
-}
+    }}
+    
