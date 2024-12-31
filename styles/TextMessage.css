@@ -1,0 +1,75 @@
+.TextMessage {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 48px; /* Slightly taller box to accommodate small text */
+    padding: 4px;
+    background: var(--menu-background); /* Black background */
+    border-top: 1px solid var(--menu-border-color); /* White border on top */
+    color: var(--menu-font-color); /* White font color */
+    font-family: "Courier New", Courier, monospace; /* Typewriter-style font */
+    font-size: 10px; /* Small enough to fit long text */
+    line-height: 1.2; /* Tighter line spacing for more text capacity */
+    overflow: hidden; /* Prevent text overflow */
+    outline: 1px solid white;
+    font-family: "Press Start 2P", monospace; /* Retro pixel font for Undertale vibe */
+
+}
+
+/* Style for the text message content */
+.TextMessage_p {
+    margin: 0;
+    font-size: inherit; /* Matches the parent font size */
+    font-family: inherit; /* Ensures typewriter style */
+    line-height: inherit; /* Consistent line height */
+    word-wrap: break-word; /* Prevents text from overflowing horizontally */
+}
+
+.TextMessage span {
+    opacity: 0;
+    font-family: inherit; /* Ensures typewriter style */
+}
+
+.TextMessage span.revealed {
+    opacity: 1;
+    font-family: inherit; /* Ensures typewriter style */
+}
+
+/* Style for the "Next" button */
+.TextMessage_button {
+    margin: 0;
+    font-size: 8px; /* Small button text to match style */
+    padding: 2px;
+    -webkit-appearance: none;
+    background: none;
+    border: 0;
+    font-family: "Courier New", Courier, monospace; /* Match font */
+    cursor: pointer;
+
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    color: white; /* White color for the button */
+}
+
+
+.message-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between image and text */
+}
+
+.message-container .face-image {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    object-fit: cover; /* Keep aspect ratio */
+    margin-left: auto; /* Push image to the right */
+}
+
+.message-container .text {
+    flex-grow: 1; /* Allow text to take remaining space */
+}
+
+
+

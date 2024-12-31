@@ -1,0 +1,56 @@
+.Battle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-image: url(/images/maps/forest/battlearea.png);
+  background-size: cover;
+  image-rendering: pixelated;
+}
+
+.Battle_hero, .Battle_enemy {
+  position: absolute;
+  transform: scale(2.5);
+  width: 16px; /* Maintain character size */
+  height: 16px; /* Maintain character size */
+  overflow: hidden;
+}
+
+.Battle_hero {
+  bottom: 60px;
+  left: 50px;
+}
+
+.Battle_enemy {
+  top: 40px;
+  right: 50px;
+}
+
+.Battle_hero img, .Battle_enemy img {
+  pointer-events: none;
+  position: absolute;
+  background: no-repeat center;
+  background-size: contain;
+  transition: top 0.5s linear, left 0.5s linear; /* Smooth movement */
+}
+
+
+/* Add life container-inspired design */
+.Battle_hero_container,
+.Battle_enemy_container {
+  position: absolute;
+  width: 40px; /* Matches the life container width */
+  height: 3px; /* Matches the life container height */
+  background: #333; /* Dark gray bar for retro feel */
+  border: 1px solid white;
+  top: -6px; /* Positioned just above the character */
+  left: -12px; /* Centered relative to the character */
+}
+
+/* Apply the container styles for each element */
+.Battle_hero .Battle_hero_container,
+.Battle_enemy .Battle_enemy_container {
+  content: '';
+  display: block;
+}

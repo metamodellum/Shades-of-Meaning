@@ -1,0 +1,98 @@
+.KeyboardMenu {
+  border: 2px solid white; /* Retro border thickness */
+  border-right: none;
+  border-bottom: none;
+  background: black; /* Solid black background */
+  position: absolute;
+  bottom: 8.5%; /* Position directly above the description box */
+  right: 0; /* Align to the right */
+  /* box-shadow: 2px 2px 0px #333; Pixelated shadow effect */
+  padding: 5px; /* Padding for content spacing */
+  font-family: 'Press Start 2P', Courier, monospace; /* Pixelated retro font */
+  font-size: 8px; /* Retro small text */
+  color: white; /* High-contrast text color */
+  width: 150px; /* Fixed width for consistency */
+}
+
+
+.KeyboardMenu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  -webkit-appearance: none;
+  border: 2px solid white; /* Matching retro border */
+  background: linear-gradient(to bottom, #222, #000); /* Subtle gradient */
+  height: 15px; /* Pixelated button size */
+  cursor: pointer;
+  font-family: 'Press Start 2P', Courier, monospace; /* Consistent retro font */
+  color: white;
+  padding: 0 1em;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  transition: background 0.2s ease-in-out, transform 0.1s ease; /* Smooth effects */
+  box-shadow: 1px 1px 0px #333; /* Pixelated shadow effect */
+}
+
+.KeyboardMenu button:hover {
+  background: rgba(255, 255, 255, 0.1); /* Highlight on hover */
+  transform: translateY(-1px); /* Slight pop-up effect */
+}
+
+.KeyboardMenu button:focus {
+  background: white; /* High-contrast focus effect */
+  color: black; /* Invert colors for focus */
+  outline: none;
+  text-shadow: 0 0 5px black; /* Glow effect */
+}
+
+.KeyboardMenu .option {
+  position: relative;
+  padding: 0 0.5em;
+}
+
+.KeyboardMenu .option .right {
+  position: absolute;
+  right: 0.5em;
+  top: 0;
+  bottom: 0;
+  font-size: 8px;
+  color: gray; /* Subtle text for right options */
+}
+
+/* Description Box with Retro Style */
+.DescriptionBox {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: white; /* High-contrast text */
+  border-top: 2px solid white; /* Retro border */
+  background: black; /* Solid black background */
+  padding: 4px;
+  font-family: 'Press Start 2P', Courier, monospace; /* Retro font */
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.DescriptionBox p {
+  font-size: 8px;
+  margin: 0;
+  padding: 0;
+  text-shadow: 1px 1px 0px #333; /* Subtle glow effect */
+}
+
+/* Add Keyframe Animations for Buttons */
+@keyframes button-glow {
+  from {
+    box-shadow: 0 0 5px white;
+  }
+  to {
+    box-shadow: 0 0 10px white;
+  }
+}
+
+.KeyboardMenu button:hover {
+  animation: button-glow 0.5s infinite alternate;
+}

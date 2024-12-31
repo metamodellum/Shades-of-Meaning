@@ -1,0 +1,4 @@
+.PauseMenu {
+    position: absolute;
+    z-index: 9999; /* Ensure this has a higher z-index than the canvas */
+  }
