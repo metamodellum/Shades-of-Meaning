@@ -65,7 +65,7 @@ class Person extends GameObject {
         }
     }
 
-  
+    // Handles moving the character one step in the current direction
     updatePosition() {
       
         const [property, change] = this.directionUpdate[this.direction];
@@ -79,7 +79,7 @@ class Person extends GameObject {
         if (this.movingProgressRemaining === 0) {
             // Emit an event when walking is complete
             utils.emitEvent("PersonWalkingComplete", {
-                whoId: this.id,
+                whoId: this.id, // Include the character's ID
             });
         }
     }

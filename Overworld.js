@@ -81,7 +81,7 @@ class Overworld {
 
         //directional input for player movement
         this.directionInput = new DirectionInput();
-        this.directionInput.init();
+        this.directionInput.begin();
 
         // Start the main game loop
         this.startGameLoop();
